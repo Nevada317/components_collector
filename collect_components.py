@@ -7,21 +7,13 @@ import os
 import sys
 
 
-if (len(sys.argv) != 3):
+if (len(sys.argv) != 4):
     print("Wrong number of arguments!")
     exit(1)
 
-root = os.path.abspath(sys.argv[1])
-components_file_name = f"{os.path.basename(root)}.h"
-outfile = f"{root}/{components_file_name}"
-outdir = os.path.abspath(sys.argv[2])
-
-print(f"Test: {root} -> {outfile}")
-
-print(outfile)
-if (not os.path.exists(outfile)):
-    gitignore = "{root}/.gitignore"
-    # TODO: Add own file to gitignore
+outfile_code = sys.argv[1]
+outfile_header = sys.argv[2]
+root = os.path.abspath(sys.argv[3])
 
 components = []
 
@@ -47,15 +39,15 @@ def callIfExist(f, name):
     f.write(f"\t#endif\n".encode())
 
 
-with open(outfile, "wb") as f:
+with open(outfile_header, "wb") as f:
     f.write("// Auto-generated file. Do not edit!\n\n".encode())
     for comp in components:
         f.write(f"#include \"{comp}/{comp}.h\"\n".encode())
 
 
-defineName = os.path.basename(outfile)
+defineName = os.path.basename(outfile_header)
 
-with open(f"{outdir}/autostart.c", "wb") as f:
+with open(outfile_code, "wb") as f:
     f.write("// Auto-generated file. Do not edit!\n\n".encode())
     f.write(f"#include \"{defineName}\"\n\n".encode())
 
@@ -66,7 +58,7 @@ with open(f"{outdir}/autostart.c", "wb") as f:
 
     f.write(f"\n".encode())
 
-    f.write("void main() {\n".encode())
+    f.write("int main() {\n".encode())
     f.write("\tinit();\n".encode())
     f.write("\twhile (1) {\n".encode())
     f.write("\t\tloop();\n".encode())
