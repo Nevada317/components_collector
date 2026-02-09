@@ -34,9 +34,8 @@ for c in components:
     names.append(c.capitalize())
 
 def callIfExist(f, name):
-    f.write(f"\t#ifdef {name}\n".encode())
-    f.write(f"\t\t{name}();\n".encode())
-    f.write(f"\t#endif\n".encode())
+    f.write(f"\textern void {name}() __attribute__((weak));\n".encode())
+    f.write(f"\tif ({name}) {name}();\n".encode())
 
 
 with open(outfile_header, "wb") as f:
